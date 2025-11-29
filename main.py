@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from poker_engine import create_deck, best_of_7, compare
+from ai_player import ai_decide
 import random
 
 
@@ -20,15 +21,17 @@ def deal_hand():
 
 
     player = [deck.pop(), deck.pop()]
-    opponent = [deck.pop(), deck.pop()]
+    ai = [deck.pop(), deck.pop()]
     board = [deck.pop() for _ in range(5)]
+    ai_action = ai_decide(ai, board[:0], "preflop")
 
 
-    result = compare(player, opponent, board)
+    result = compare(player, ai, board)
 
     return {
         "player": player,
         "opponent": ["??", "??"],
         "board": board,
-        "winner": result
+        "winner": result,
+        "ai_action": ai_action
     }
