@@ -23,7 +23,7 @@ def deal_hand():
     player = [deck.pop(), deck.pop()]
     ai = [deck.pop(), deck.pop()]
     board = [deck.pop() for _ in range(5)]
-    ai_action = ai_decide(ai, board[:0], "preflop")
+    ai_action = ai_decide(ai, board[:0], "preflop", bluff_enabled=True)
 
 
     result = compare(player, ai, board)

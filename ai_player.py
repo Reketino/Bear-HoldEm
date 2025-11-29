@@ -1,14 +1,26 @@
+import random
 from poker_engine import best_of_7
 
 
-def ai_decide(hole, board, stage):
+def ai_decide(hole, board, stage, bluff_enabled=True):
+
+    
+    if bluff_enabled:
+
+        #15% chance AI bluffs raise
+        if random.random() < 0.15:
+            return "raise"
+        
+        #5% chance of all in bluff
+        if random.random() < 0.05:
+            return "allin"
 
 
     strong_pairs = ["AA", "KK", "QQ", "JJ"]
     connected = ["AK", "AQ", "AJ", "KQ", "KJ", "QJ"]
 
 
-    ranks = "23456789TJQKA"
+    
     h1, h2 = hole[0][0], hole[1][0]
     pair = h1 == h2
 
