@@ -30,7 +30,7 @@ def deal_hand():
 
     return {
         "player": player,
-        "opponent": ["??", "??"],
+        "ai": ["??", "??"],
         "board": board,
         "winner": result,
         "ai_action": ai_action
