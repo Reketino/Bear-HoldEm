@@ -79,3 +79,12 @@ def take_action(player_id: int, action: str, amount: int = 0):
     }
 
 # Endpoint for å hente ut gamestate
+@app.get("/state")
+def get_state():
+    return {
+        "players": [vars(p) for p in game.players],
+        "board": game.board,
+        "street": game.street,
+        "pot": game.pot,
+        "current_idx": game.current_idx
+    }
