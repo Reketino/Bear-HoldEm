@@ -138,5 +138,42 @@ class Gamestate:
 
             return "allin"
         
-
         return "unkown_action"
+    
+
+    def advanced_street(self):
+        for p in self.players:
+            self.pot += p.current_bet
+            p.current_bet = 0
+
+        self.to_call = 0
+
+
+        if self.street == "preflop":
+            # 3 kort flop
+            self.board = [self.deck.pop(), self.deck.pop(), self.deck.pop()]
+            self.street = "flop"
+
+    
+        elif self.street == "flop":
+            self.board.append(self.deck.pop())
+            self.street = "turn"
+
+
+        elif self.street == "turn":
+            self.board.append(self.deck.pop())
+            self.street = "river"
+
+
+        elif self.street == "river":
+            self.street = "showdown"
+            return "showdown"
+        
+        # current_idx blir satt til første spiller etter dealer
+        self.current_idx = (self.dealer_idx + 1) % len(self.players)
+
+        # Finner første spiller som ikke foldet
+        while self.players[self.current_idx].folded:
+            self.current_idx = (self.current_idx + 1) % len(self.players)
+
+        return self.street
