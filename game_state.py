@@ -179,3 +179,23 @@ class Gamestate:
             self.current_idx = (self.current_idx + 1) % len(self.players)
 
         return self.street
+    
+
+    def is_betting_round_finished(self):
+        active_players = [p for p in self.players if not p.folded]
+
+        # Hånd ferdig vist det bare er en spiller igjen
+        if len(active_players) <= 1:
+            return True
+        
+        # Hente aktuelle bets
+        active_bets = [p.current_bet for p in active_players]
+
+        if len(set(active_bets)) == 1:
+            if self.last_raiser_idx == -1:
+                return True
+            
+        if self.current_idx == self.last_raiser_idx:
+            return True
+        
+        return False
