@@ -80,3 +80,63 @@ class Gamestate:
         # Etter big blind er "player" først ut
         self.current_idx = (bb_idx + 1) % len(self.players)
         self.last_raiser_idx = bb_idx
+
+
+    def player_action(self, player_id, action, amount=0):
+        player = self.players[player_id]
+
+        if player.folded:
+            return "Player already folded"
+        
+        if action == "fold":
+            player.folded = True
+            return "fold"
+        
+        if action == "check":
+            if player.current_bet == self.to_call:
+                return "check"
+            else:
+                return "cannot_check"
+            
+        if action == "call":
+            to_pay = self.to_call - player.current_bet
+            to_pay = min(to_pay, player.chips) #All in
+            player.chips -= to_pay
+            player.total_bet += to_pay
+            return "call"
+        
+        if action == "raise":
+            if amount <= self.to_call:
+                return "invalid_raise"
+            
+            raise_amount = amount - player.current_bet
+            if raise_amount > player.chips:
+                return "not_enough_chips"
+            
+
+            player.chips -= raise_amount
+            player.current_bet = amount
+            player.total_bet += raise_amount
+
+
+            self.to_call = amount
+            self.last_raiser_idx = player_id
+            return "raise"
+        
+
+        if action == "allin":
+            amount = player.chips + player.current_bet
+            player.total_bet += player.chips
+            player.chips = 0
+            player.current_bet = amount
+
+
+            if amount > self.to_call:
+                self.to_call = amount
+                self.last_raiser_idx = player_id
+
+
+            return "allin"
+        
+
+        return "unkown_action"
