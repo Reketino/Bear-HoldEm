@@ -102,6 +102,7 @@ class Gamestate:
             to_pay = self.to_call - player.current_bet
             to_pay = min(to_pay, player.chips) #All in
             player.chips -= to_pay
+            player.current_bet += to_pay
             player.total_bet += to_pay
             return "call"
         
@@ -138,15 +139,16 @@ class Gamestate:
 
             return "allin"
         
-        return "unkown_action"
+        return "unknown_action"
     
 
-    def advanced_street(self):
+    def advance_street(self):
         for p in self.players:
             self.pot += p.current_bet
             p.current_bet = 0
 
         self.to_call = 0
+        self.last_raiser_idx = -1
 
 
         if self.street == "preflop":
