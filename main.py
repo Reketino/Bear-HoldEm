@@ -3,6 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from poker_engine import create_deck, best_of_7, compare
 from ai_player import ai_decide
 import random
+from game_state import Gamestate
+
+
+game = Gamestate() # Global Spilltilsand
+game.reset_table(num_ai=1) # Lager 1 AI-spiller eller flere
 
 
 app = FastAPI()
