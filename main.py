@@ -43,7 +43,7 @@ def deal_hand():
 @app.post("/start")
 def start_game(num_ai: int = 1, starting_chips: int = 1000):
     game.reset_table(num_ai=num_ai, starting_chips=starting_chips)
-    game.shuffle_and_deal
+    game.shuffle_and_deal()
 
     return {
         "message": "new_game_started",
