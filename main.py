@@ -21,23 +21,30 @@ app.add_middleware(
 
 @app.get("/deal")
 def deal_hand():
-    deck = create_deck()
-    random.shuffle(deck)
-
-    player = [deck.pop(), deck.pop()]
-    ai = [deck.pop(), deck.pop()]
-    board = [deck.pop() for _ in range(5)]
-    ai_action = ai_decide(ai, board[:0], "preflop", bluff_enabled=True)
-
-    result = compare(player, ai, board)
+ 
+    game.shuffle_and_deal()
 
     return {
-        "player": player,
-        "ai": ["??", "??"],
-        "board": board,
-        "winner": result,
-        "ai_action": ai_action
+        "message": "hand_dealt",
+        "players": [
+            {
+                "id": p.id,
+                "name": p.name,
+                "chips": p.chips,
+                "hand": p.hand if not p.ai else ["??", "??"], # Skjuler AI kort
+                "folded": p.folded,
+                "current_bet": p.current_bet,
+                "total_bet": p.total_bet
+            }
+            for p in game.players
+        ],
+        "board": game.board,
+        "street": game.street,
+        "pot": game.pot,
+        "dealer_idx": game.dealer_idx,
+        "current_idx": game.current_idx
     }
+
 
 # Endpoint for resett/start av spill
 @app.post("/start")
