@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List
 import random
-from poker_engine import create_deck
+from poker_engine import create_deck, best_of_7
 
 
 
@@ -199,3 +199,46 @@ class Gamestate:
             return True
         
         return False
+    
+
+    def showdown(self):
+        #funksjon for å samle spillere som ikke har foldet
+        active_players = [p for p in self.players if not p.folded]
+
+        #En spiller igjen?-automatisk vinner
+        if len (active_players) == 1:
+            winner = active_players[0]
+            return {
+                "winner_id": winner.id,
+                "winner_name": winner.name,
+                "winner_hand": None,
+                "players": [
+                    {"id": p.id, "name": p.name, "hand": p.hand, "folded": p.folded}
+                    for p in self.players
+                ],
+            }
+        
+
+        # Hver spiller blir evaluert her med "bof7"
+        results = []
+        for p in active_players:
+            score, hand_name = best_of_7(p.hand, self.board)
+            results.append({
+                "id": p.id,
+                "name": p.name,
+                "hand": p.hand, 
+                "score": score,
+                "hand_name": hand_name
+            })
+
+        # Sortering av score, høyste score først
+        results.sort(key=lambda x: x["score"], reverse=True)
+        winner = results[0]
+
+
+        return {
+            "winner_id":winner["id"],
+            "winner_name": winner["name"],
+            "winner_hand": winner["hand_name"],
+            "players": results
+        }    
