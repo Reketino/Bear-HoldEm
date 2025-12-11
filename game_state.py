@@ -206,7 +206,7 @@ class Gamestate:
         active_players = [p for p in self.players if not p.folded]
 
         #En spiller igjen?-automatisk vinner
-        if len (active_players) == 1:
+        if len(active_players) == 1:
             winner = active_players[0]
             return {
                 "winner_id": winner.id,
@@ -240,5 +240,6 @@ class Gamestate:
             "winner_id":winner["id"],
             "winner_name": winner["name"],
             "winner_hand": winner["hand_name"],
+            "pot": self.pot,
             "players": results
         }    
