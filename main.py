@@ -63,27 +63,23 @@ def start_game(num_ai: int = 1, starting_chips: int = 1000):
 # Endpoint for spiller handlinger
 @app.post("/action")
 def take_action(player_id: int, action: str, amount: int = 0):
-
-
     result = game.player_action(player_id, action, amount)
 
 
-    if not game.players[1].folded and game.current_idx == 1:
-        ai_move = ai_decide(
-            hole=game.players[1].hand,
-            board=game.board,
-            stage=game.street
-        )
-        game.player_action(1, ai_move)
+    # Bettngrunde ferdig? -> advance street
+    if game.is_betting_round_finished():
+        street = game.advance_street()
 
-
-    return {
-        "action_result": result,
-        "players": [vars(p) for p in game.players],
-        "board": game.board,
-        "street": game.street,
-        "pot": game.pot
-    }
+        if street == "showdown":
+            showdown_result = game.showdown()
+            return {
+             "action_result": result,
+             "street": "showdown",
+             "showdown": showdown_result,
+             "board": game.board,
+             "pot": game.pot,
+             "players": [vars(p) for p in game.players],
+        }
 
 # Endpoint for å hente ut gamestate
 @app.get("/state")
