@@ -73,13 +73,63 @@ def take_action(player_id: int, action: str, amount: int = 0):
         if street == "showdown":
             showdown_result = game.showdown()
             return {
-             "action_result": result,
-             "street": "showdown",
-             "showdown": showdown_result,
-             "board": game.board,
-             "pot": game.pot,
-             "players": [vars(p) for p in game.players],
+                "action_result": result,
+                "street": "showdown",
+                "showdown": showdown_result,
+                "board": game.board,
+                "pot": game.pot,
+                "players": [vars(p) for p in game.players],
+            }
+
+
+        return {
+            "action_result": result,
+            "street_advanced": street,
+            "board": game.board,
+            "players": [vars(p) for p in game.players],
+            "pot": game.pot,
         }
+
+    # Når det er AI sin tur, AI = index 1
+    if game.current_idx == 1 and not game.players[1].folded and game.street != "showdown":
+        ai_move = ai_decide(hole=game.players[1].hand, board=game.board, stage=game.street)
+        game.player_action(1, ai_move)
+
+
+        # Sjekker igjen etter AI action.
+        if game.is_betting_round_finished():
+            street = game.advance_street()
+            if street == "showdown":
+                showdown_result = game.showdown()
+                return {
+                    "action_result": result,
+                    "ai_action": ai_move,
+                    "street": "showdown",
+                    "showdown": showdown_result,
+                    "board": game.board,
+                    "pot": game.pot,
+                    "players": [vars(p) for p in game.players],
+                }
+            
+            return {
+                "action_result": result,
+                "ai_action": ai_move,
+                "street_advanced": street,
+                "board": game.board,
+                "pot": game.pot,
+                "players":[vars(p) for p in game.players],
+            }
+        
+        # Returnerer til def, hvis ingen street-advance
+        return {
+            "action_result": result,
+            "players": [vars(p) for p in game.players],
+            "board": game.board,
+            "street": game.street,
+            "pot": game.pot
+        }
+
+
 
 # Endpoint for å hente ut gamestate
 @app.get("/state")
