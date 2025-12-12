@@ -125,7 +125,8 @@ def take_action(player_id: int, action: str, amount: int = 0):
                 "board": game.board,
                 "pot": game.pot,
                 "players":[vars(p) for p in game.players],
-        }
+                "hand_strength": game.evaluate_live_strength()
+            }
         
         # Returnerer til def, hvis ingen street-advance
     return {
