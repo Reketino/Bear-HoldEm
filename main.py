@@ -75,7 +75,10 @@ def take_action(player_id: int, action: str, amount: int = 0):
             return {
                 "action_result": result,
                 "street": "showdown",
-                "showdown": showdown_result,
+                "showdown": {
+                   **showdown_result,
+                   "hand_strength": game.evaluate_live_strength(),
+                },
                 "board": game.board,
                 "pot": game.pot,
                 "players": [vars(p) for p in game.players],
@@ -99,13 +102,17 @@ def take_action(player_id: int, action: str, amount: int = 0):
         # Sjekker igjen etter AI action.
         if game.is_betting_round_finished():
             street = game.advance_street()
+            
             if street == "showdown":
                 showdown_result = game.showdown()
                 return {
                     "action_result": result,
                     "ai_action": ai_move,
                     "street": "showdown",
-                    "showdown": showdown_result,
+                    "showdown": {
+                        **showdown_result,
+                        "hand_strength": game.evaluate_live_strength(),
+                    },
                     "board": game.board,
                     "pot": game.pot,
                     "players": [vars(p) for p in game.players],
@@ -118,16 +125,17 @@ def take_action(player_id: int, action: str, amount: int = 0):
                 "board": game.board,
                 "pot": game.pot,
                 "players":[vars(p) for p in game.players],
-            }
+        }
         
         # Returnerer til def, hvis ingen street-advance
-        return {
-            "action_result": result,
-            "players": [vars(p) for p in game.players],
-            "board": game.board,
-            "street": game.street,
-            "pot": game.pot
-        }
+    return {
+        "action_result": result,
+        "players": [vars(p) for p in game.players],
+        "board": game.board,
+        "street": game.street,
+        "pot": game.pot,
+        "hand_strength": game.evaluate_live_strength()
+    }
 
 
 
@@ -139,5 +147,6 @@ def get_state():
         "board": game.board,
         "street": game.street,
         "pot": game.pot,
-        "current_idx": game.current_idx
+        "current_idx": game.current_idx,
+        "hand_strength": game.evaluate_live_strength()
     }

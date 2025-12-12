@@ -200,6 +200,31 @@ class Gamestate:
         
         return False
     
+    # Live vurdering av styrke på hånd.
+    def evaluate_live_strength(self):
+        results = []
+
+        for p in self.players:
+            if p.folded:
+                results.append({
+                    "id":p.id,
+                    "name": p.name,
+                    "hand_name": "Folded",
+                    "score": 0,
+                })
+                continue
+
+
+            score, hand_name = best_of_7(p.hand, self.board)
+            results.append({
+                "id": p.id,
+                "name": p.name,
+                "hand_name": hand_name,
+                "score": score
+            })
+
+        return results
+    
 
     def showdown(self):
         #funksjon for å samle spillere som ikke har foldet
