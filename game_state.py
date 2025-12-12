@@ -204,6 +204,16 @@ class Gamestate:
     def evaluate_live_strength(self):
         results = []
 
+        if len(self.board) < 3:
+            for p in self.players:
+                results.append({
+                    "id": p.id,
+                    "name": p.name,
+                    "hand_name": "-",
+                    "score": 0,
+                })
+            return results
+
         for p in self.players:
             if p.folded:
                 results.append({
@@ -216,6 +226,11 @@ class Gamestate:
 
 
             score, hand_name = best_of_7(p.hand, self.board)
+            
+            if not isinstance(hand_name, str):
+                hand_name = "High Card"
+                
+                
             results.append({
                 "id": p.id,
                 "name": p.name,
